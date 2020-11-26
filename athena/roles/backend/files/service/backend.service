@@ -1,0 +1,14 @@
+[Unit]
+Description=Athena Backend Services
+After=network.target
+
+[Service]
+ExecStartPre=/bin/sleep 5
+Type=simple
+EnvironmentFile=/opt/athena/env/backend.env
+ExecStart=/opt/athena/run/backend.sh
+User=root
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,41 @@
+#!/bin/bash -eu
+
+# Check variable
+if [ $# -ne 1 ]; then
+    echo $0: usage: build-backend build_version
+    exit 1
+fi
+
+build_version=$1
+src_dir="/opt/athena/backend"
+build_dir="/home/ubuntu/build/backend/$build_version"
+built_file="build-${build_version}.tar.gz"
+s3_build_bucket="edulogvn-artifacts"
+
+cd $src_dir
+git pull
+
+cd $src_dir/Source/BuildAggregator
+mvn clean
+mvn install -DskipTests -e -U
+
+sleep 5
+mkdir -p $build_dir
+
+cd /home/ubuntu/.m2/repository/com/edulog/
+cp -p RoutingServer/0.1.0/RoutingServer-0.1.0.jar $build_dir/RoutingServer.jar
+cp -p TransactionHUBV2/2.1.0/TransactionHUBV2-2.1.0.jar $build_dir/TransactionHUBV2.jar
+cp -p RoutingMigration/1.0/RoutingMigration-1.0.jar $build_dir/RoutingMigration.jar
+cp -p PlannedRollover/2.1.0/PlannedRollover-2.1.0.jar $build_dir/PlannedRollover.jar
+cp -p GeoCodeService/0.1.0/GeoCodeService-0.1.0.jar $build_dir/GeoCodeService.jar
+cp -p DriverTimeAndAttendance/1.0.0/DriverTimeAndAttendance-1.0.0.jar $build_dir/DriverTimeAndAttendance.jar
+cp -p IVIN/1.0.0/IVIN-1.0.0.jar $build_dir/IVIN.jar
+
+cd $build_dir
+cd ..
+sudo -u ubuntu tar -zcvf $built_file $build_version
+
+aws s3 cp $built_file s3://$s3_build_bucket/athena/backend/
+
+rm -f $built_file
+

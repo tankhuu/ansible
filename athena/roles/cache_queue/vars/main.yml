@@ -1,0 +1,16 @@
+---
+# vars file for cache_queue
+# AWS Configuration
+ec2_region: "us-east-2"
+ec2_instance_type: "t2.small"
+ec2_image: "ami-0fc20dd1da406780b"
+ec2_keypair: "edulogvn-devops"
+ec2_profile: "AmazonSSMManagedInstanceCore"
+ec2_sg_name: "ami-cache-queue-sg"
+vpc_subnet_id: "subnet-0c9399d0ee2b5dbf9"
+vpc_id: "vpc-04572760f9391352e"
+
+# RabbitMQ password
+rabbit_admin_pass: "s3crEt"
+rabbit_user: "edulog"
+rabbit_password: "edul0g"

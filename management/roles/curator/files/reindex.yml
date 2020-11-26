@@ -1,0 +1,27 @@
+---
+# Remember, leave a key empty if there is no value.  None will be a string,
+# not a Python "NoneType"
+#
+# Also remember that all examples have 'disable_action' set to True.  If you
+# want to use this action as a template, be sure to set this to False after
+# copying it.
+actions:
+  1:
+    description: >-
+      Reindex scanhistories from elastico to aws es
+    action: reindex
+    options:
+      #disable_action: True
+      wait_interval: 9
+      max_wait: -1
+      request_body:
+        source:
+          remote:
+            host: https://e20f6fed69ae415483d527d15665f843.us-west-2.aws.found.io:9243
+            username: elastic
+            password: lwZ96p4ycTL8p4Jt9Iw4S9Pu
+          index: ["scanhistories-202003"]
+        dest:
+          index: scanhistories-202003
+    filters:
+      - filtertype: none

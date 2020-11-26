@@ -1,0 +1,18 @@
+#!/bin/bash -ex
+
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
+echo "deb https://artifacts.elastic.co/packages/7.x/apt stable main" | sudo tee -a /etc/apt/sources.list.d/elastic-7.x.list
+
+apt update
+apt install -y awscli tree apt-transport-https
+apt install -y openjdk-11-jre openjdk-11-jdk
+apt install -y logstash
+# Fix not enough memory of t3.micro instance
+sed -i 's/-Xms1g/-Xms256m/g' /etc/logstash/jvm.options
+sed -i 's/-Xmx1g/-Xmx512m/g' /etc/logstash/jvm.options
+apt install -y logstash
+
+/usr/share/logstash/bin/logstash-plugin install logstash-output-amazon_es
+

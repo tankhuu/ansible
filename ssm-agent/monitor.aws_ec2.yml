@@ -1,0 +1,10 @@
+plugin: aws_ec2
+regions:
+  - us-west-1
+  - us-west-2
+filters:
+  # All instances with their `Monitoring` tag set to `true`
+  tag:Monitoring: "true"
+compose:
+  # set the ansible_host variable to connect with the private IP address without changing the hostname
+  ansible_host: private_ip_address

@@ -1,0 +1,38 @@
+---
+- hosts: all
+  remote_user: admin
+  become: yes
+  # gather_facts: False
+
+  tasks:
+    - name: create tmp dir for ssm
+      shell:
+        cmd: mkdir /tmp/ssm
+
+    - name: create dir for collectd & statd
+      shell:
+        cmd: mkdir /usr/share/collectd/
+
+    - name: create db file for collectd
+      shell:
+        cmd: touch types.db
+      args:
+        chdir: /usr/share/collectd/
+
+    - name: download ssm package
+      shell:
+        cmd: wget https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb
+      args:
+        chdir: /tmp/ssm
+
+    - name: install ssm package
+      shell:
+        cmd: dpkg -i amazon-ssm-agent.deb
+      args:
+        chdir: /tmp/ssm
+
+    - name: enable&start ssm package
+      shell:
+        cmd: systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent
+      args:
+        chdir: /tmp/ssm

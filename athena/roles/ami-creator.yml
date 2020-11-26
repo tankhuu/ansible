@@ -1,0 +1,12 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  user: tankhuu
+  roles:
+    - role: backend
+      tags: ["be_only"]
+    - role: cache_queue
+      tags: ["cq_only"]
+    - role: builder
+      tags: ["builder_only"]

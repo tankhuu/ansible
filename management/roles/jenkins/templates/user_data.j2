@@ -1,0 +1,17 @@
+#!/bin/bash -ex
+
+# install java 11
+apt install -y openjdk-11-jre openjdk-11-jdk
+java -version
+
+# Install Jenkins
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+# sudo gpg --keyserver https://pkg.jenkins.io/debian/jenkins.io.key --recv-keys 9B7D32F2D50582E6
+sudo sh -c 'echo deb http://pkg.jenkins-ci.org/debian binary/ > /etc/apt/sources.list.d/jenkins.list'
+
+apt update
+apt install -y jenkins
+
+echo "JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"" >> /etc/environment
+echo "M2_HOME=\"/usr/share/maven\"" >> /etc/environment
+echo "M2=\"/usr/share/maven/bin\"" >> /etc/environment

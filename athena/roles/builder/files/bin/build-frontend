@@ -1,0 +1,22 @@
+#!/bin/bash -eu
+
+# Check variable
+if [ $# -ne 1 ]; then
+    echo $0: usage: build-athena-backend tenant
+    exit 1
+fi
+
+tenant=$1
+base_dir="/opt/athena"
+
+cd $base_dir/frontend
+git checkout src/app/app.uris.ts
+git pull
+# base on the tenant
+# edit src/app/app.uris.ts for backend host
+# tenant: hallettsville
+cp -p /opt/athena/config/${tenant}/app.uris.ts src/app/app.uris.ts
+
+npm install > /dev/null
+npm run postinstall
+npm run build:prod

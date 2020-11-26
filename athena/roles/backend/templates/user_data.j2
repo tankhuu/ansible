@@ -1,0 +1,75 @@
+#!/bin/bash -ex
+
+# Variables #
+base_dir="/opt/athena"
+s3_bucket={{s3_bucket}}
+
+# Prepare server
+# Disabling apt.daily.service
+systemctl stop apt-daily.timer
+systemctl disable apt-daily.timer
+systemctl mask apt-daily.service
+systemctl daemon-reload
+
+# Install prerequisites
+
+# register deb
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+
+apt update
+
+# install libs
+apt install -y software-properties-common apt-transport-https awscli tree
+apt install -y autossh libcurl4 libcurl4-openssl-dev gcc make perl dkms wget bzip2 fish libgettextpo-dev
+apt install -y lsof mlocate apache2-ssl-dev libperl-dev apache2
+apt install -y python3 python3-pip supervisor zlib1g-dev zsh postgresql-client
+apt install -y automake autotools-dev fuse g++ git libcurl4-gnutls-dev libfuse-dev libssl-dev libxml2-dev make pkg-config
+
+systemctl enable apache2
+systemctl stop apache2
+sleep 10
+
+# install java 11
+apt install -y openjdk-11-jre openjdk-11-jdk
+java -version
+
+# Enable modules
+a2enmod proxy
+a2enmod proxy_http
+a2enmod proxy_wstunnel
+a2enmod headers
+a2enmod rewrite
+
+# Get necessary files
+cd /tmp
+aws s3 cp --recursive s3://${s3_bucket}/athena/backend/files/ .
+
+# Add Apache configuration & systemd
+mv apache-config/000-default.conf /etc/apache2/sites-enabled/
+mv service/apache2.service /lib/systemd/system/apache2.service
+
+# Add Backend Deploy Script
+mv bin/deploy-backend /usr/local/bin/deploy-backend
+chown ubuntu: /usr/local/bin/deploy-backend
+chmod +x /usr/local/bin/deploy-backend
+
+# Create necessary dirs
+mkdir -p $base_dir
+mv env $base_dir/
+mv run $base_dir/
+mv src $base_dir/
+mv service $base_dir/
+chown -R ubuntu: $base_dir
+chmod +x $base_dir/run/*.sh
+chmod +x $base_dir/src/*.jar
+# chmod +x $base_dir/service/*.service
+cp $base_dir/service/*.service /etc/systemd/system/
+
+# Enable Services
+systemctl enable backend
+systemctl enable middle
+systemctl enable geocodeservice
+systemctl enable plannedrollover
+systemctl enable timeattendance
+systemctl enable ivin

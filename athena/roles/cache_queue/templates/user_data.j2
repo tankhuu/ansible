@@ -1,0 +1,66 @@
+#!/bin/bash -ex
+
+# Prepare server
+# Disabling apt.daily.service
+systemctl stop apt-daily.timer
+systemctl disable apt-daily.timer
+systemctl mask apt-daily.service
+systemctl daemon-reload
+
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" |sudo tee  /etc/apt/sources.list.d/pgdg.list
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+apt update
+
+apt install awscli tree
+
+# install MongoDB
+apt install -y mongodb
+systemctl enable mongodb
+systemctl stop mongodb
+# Allow remote access to mongodb 
+sed -i 's/bind_ip = 127.0.0.1/bind_ip = 0.0.0.0/g' /etc/mongodb.conf
+
+systemctl enable mongodb
+systemctl restart mongodb
+
+
+# install RabbitMQ
+curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | sudo apt-key add -
+apt-key adv --keyserver "hkps://keys.openpgp.org" --recv-keys "0x0A9AF2115F4687BD29803A206B73A36E6026DFCA"
+apt install apt-transport-https
+cat << EOF > /etc/apt/sources.list.d/bintray.erlang.list
+## Installs the latest 21.x version available in the repository.
+## Please see the distribution name table above.
+deb http://dl.bintray.com/rabbitmq-erlang/debian bionic erlang-21.x
+EOF
+apt update
+apt install -y erlang-base \
+        erlang-asn1 erlang-crypto erlang-eldap erlang-ftp erlang-inets \
+        erlang-mnesia erlang-os-mon erlang-parsetools erlang-public-key \
+        erlang-runtime-tools erlang-snmp erlang-ssl \
+        erlang-syntax-tools erlang-tftp erlang-tools erlang-xmerl
+
+wget -O - "https://packagecloud.io/rabbitmq/rabbitmq-server/gpgkey" | sudo apt-key add -
+apt install curl gnupg -y
+curl -fsSL https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc | sudo apt-key add -
+cat << EOF > /etc/apt/sources.list.d/bintray.rabbitmq.list
+## Installs the latest Erlang 22.x release.
+## Change component to "erlang-21.x" to install the latest 21.x version.
+## "bionic" as distribution name should work for any later Ubuntu or Debian release.
+## See the release to distribution mapping table in RabbitMQ doc guides to learn more.
+deb https://dl.bintray.com/rabbitmq-erlang/debian bionic erlang
+deb https://dl.bintray.com/rabbitmq/debian bionic main
+EOF
+apt update
+apt install rabbitmq-server -y --fix-missing
+
+rabbitmq-plugins enable --offline rabbitmq_management rabbitmq_stomp rabbitmq_web_stomp
+
+# add user for rabbitmq
+rabbitmqctl add_user full_access {{ rabbit_admin_pass }}
+rabbitmqctl set_user_tags full_access administrator
+rabbitmqctl add_user {{ rabbit_user }} {{ rabbit_password }}
+rabbitmqctl set_user_tags {{ rabbit_user }} administrator
+
+systemctl enable rabbitmq-server
+systemctl restart rabbitmq-server

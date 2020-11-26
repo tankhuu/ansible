@@ -1,0 +1,21 @@
+#!/bin/bash
+
+built_version=$1
+base_dir="/opt/athena/src"
+s3_bucket="edulogvn-artifacts"
+build_file="${built_version}.tar.gz"
+
+# Pull jar files from S3
+cd /tmp
+aws s3 cp s3://$s3_bucket/athena/backend/$build_file .
+tar zxvf $build_file
+mv $built_version/* $base_dir/
+chmod +x $base_dir/*.jar
+rm -rf $built_version
+rm -f $build_file
+
+echo "==> List all deployed files"
+ls -l $base_dir
+
+echo "==> Sleep after 10s then stop for building AMI"
+sleep 10

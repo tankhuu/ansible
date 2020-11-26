@@ -1,0 +1,20 @@
+---
+# vars file for builder
+# AWS Configuration
+ec2_region: "us-east-2"
+ec2_instance_type: "c5n.large"
+ec2_image: "ami-0fc20dd1da406780b"
+ec2_keypair: "edulogvn-devops"
+ec2_profile: "AmazonSSMManagedInstanceCore"
+ec2_sg_name: "ami-builder-sg"
+vpc_subnet_id: "subnet-0c9399d0ee2b5dbf9"
+vpc_id: "vpc-04572760f9391352e"
+# S3 Build Bucket
+s3_build_bucket: "edulogvn-artifacts"
+s3_backup_bucket: "edulogvn-backup"
+s3_devops_bucket: "edulogvn-devops"
+# Git User
+git_repo_backend: "git@github.com:eduloginc/Athena.git"
+git_branch_backend: "tc-demo"
+git_repo_frontend: "git@github.com:eduloginc/EduLog-AthenaUI-v1_2.git"
+git_branch_frontend: "tc-demo"

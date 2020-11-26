@@ -1,0 +1,175 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors/>
+  <version>2.233</version>
+  <installStateName>RUNNING</installStateName>
+  <numExecutors>2</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy">
+    <roleMap type="globalRoles">
+      <role name="admin" pattern=".*">
+        <permissions>
+          <permission>hudson.model.View.Delete</permission>
+          <permission>hudson.model.Hudson.Manage</permission>
+          <permission>hudson.model.Computer.Connect</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Hudson.UploadPlugins</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains</permission>
+          <permission>hudson.model.Computer.Create</permission>
+          <permission>hudson.model.View.Configure</permission>
+          <permission>hudson.model.Hudson.ConfigureUpdateCenter</permission>
+          <permission>hudson.model.Computer.Build</permission>
+          <permission>hudson.model.Item.Configure</permission>
+          <permission>hudson.model.Hudson.Administer</permission>
+          <permission>hudson.model.Item.Cancel</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View</permission>
+          <permission>hudson.model.Computer.Delete</permission>
+          <permission>hudson.model.Item.Build</permission>
+          <permission>hudson.model.Item.ExtendedRead</permission>
+          <permission>hudson.scm.SCM.Tag</permission>
+          <permission>hudson.model.Item.Move</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Hudson.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update</permission>
+          <permission>hudson.model.Item.Create</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete</permission>
+          <permission>hudson.model.Computer.Provision</permission>
+          <permission>hudson.model.Run.Replay</permission>
+          <permission>hudson.model.Item.WipeOut</permission>
+          <permission>hudson.model.View.Read</permission>
+          <permission>hudson.model.Hudson.RunScripts</permission>
+          <permission>hudson.model.Hudson.SystemRead</permission>
+          <permission>hudson.model.View.Create</permission>
+          <permission>hudson.model.Computer.ExtendedRead</permission>
+          <permission>hudson.model.Item.Delete</permission>
+          <permission>hudson.model.Computer.Configure</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create</permission>
+          <permission>hudson.model.Computer.Disconnect</permission>
+          <permission>hudson.model.Run.Artifacts</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.UseItem</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.UseOwn</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs>
+          <sid>tan.khuu@karrostech.com</sid>
+        </assignedSIDs>
+      </role>
+    </roleMap>
+    <roleMap type="slaveRoles"/>
+    <roleMap type="projectRoles"/>
+  </authorizationStrategy>
+  <securityRealm class="org.jenkinsci.plugins.googlelogin.GoogleOAuth2SecurityRealm" plugin="google-login@1.6">
+    <clientId>396685928022-mmjrl41cvvnccetnlqbsaqbt616g31hi.apps.googleusercontent.com</clientId>
+    <clientSecret>{AQAAABAAAAAgKwICP8i+TXf3Te9moKviEuF/bNVFUGrqShloTHZ/234KK0QxUFm7j9yU7QwuuwMA}</clientSecret>
+    <rootURLFromRequest>false</rootURLFromRequest>
+  </securityRealm>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${JENKINS_HOME}/workspace/${ITEM_FULL_NAME}</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+  <jdks>
+    <jdk>
+      <name>JAVA_HOME</name>
+      <home>/usr/lib/jvm/java-11-openjdk-amd64</home>
+      <properties/>
+    </jdk>
+  </jdks>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+  <clouds/>
+  <quietPeriod>5</quietPeriod>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>all</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+    </hudson.model.AllView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Auto</name>
+      <description>Athena CI/CD for Dev &amp; Stage Environment. (And Demo Frontend)</description>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator"/>
+        <string>Athena</string>
+        <string>EduLog-AthenaUI-v1_2</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+        <hudson.plugins.favorite.column.FavoriteColumn plugin="favorite@2.3.2"/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Demo</name>
+      <description>Athena Frontend Jobs View</description>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
+        <string>ATH-Backend-Demo</string>
+        <string>ATH-Backend-Tag-Image</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+        <hudson.plugins.favorite.column.FavoriteColumn plugin="favorite@2.3.2"/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+    <listView>
+      <owner class="hudson" reference="../../.."/>
+      <name>Production</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <jobNames>
+        <comparator class="hudson.util.CaseInsensitiveComparator" reference="../../../listView/jobNames/comparator"/>
+        <string>ATH-Production</string>
+      </jobNames>
+      <jobFilters/>
+      <columns>
+        <hudson.views.StatusColumn/>
+        <hudson.views.WeatherColumn/>
+        <hudson.views.JobColumn/>
+        <hudson.views.LastSuccessColumn/>
+        <hudson.views.LastFailureColumn/>
+        <hudson.views.LastDurationColumn/>
+        <hudson.views.BuildButtonColumn/>
+        <hudson.plugins.favorite.column.FavoriteColumn plugin="favorite@2.3.2"/>
+      </columns>
+      <recurse>false</recurse>
+    </listView>
+  </views>
+  <primaryView>all</primaryView>
+  <slaveAgentPort>-1</slaveAgentPort>
+  <label></label>
+  <crumbIssuer class="hudson.security.csrf.DefaultCrumbIssuer">
+    <excludeClientIPFromCrumb>true</excludeClientIPFromCrumb>
+  </crumbIssuer>
+  <nodeProperties/>
+  <globalNodeProperties/>
