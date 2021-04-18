@@ -1,2 +1,58 @@
 ---
 # tasks file for openvpn
+- name: Update Packages
+  command: apt update -y
+- name: Install OpenVPN & EasyRSA
+  command: sudo apt install openvpn easy-rsa -y
+- name: Create Working Directory
+  file:
+    path: /opt/openvpn
+    state: directory
+- name: Configure Server
+  shell:
+    chdir: /opt/openvpn
+    cmd: |
+    #!/bin/bash -xe
+    dd if=/dev/urandom of=.rnd bs=256 count=1
+    make-cadir openvpn-ca
+    cd openvpn-ca
+    . vars
+    ./clean-all
+    cp -p openssl-1.0.0.cnf openssl.cnf
+    ./build-ca --batch
+    ./build-key-server --batch server
+    ./build-dh --batch
+    openvpn --genkey --secret keys/ta.key
+    cd keys/
+    sudo cp ca.crt server.crt server.key ta.key dh2048.pem /etc/openvpn
+    
+    # Enable Package Forwarding
+    echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+    # Apply changed
+    sysctl -p
+
+    # Configure Firewall allow NAT
+    cat << EOF >> /etc/ufw/before.rules
+    # START OPENVPN RULES
+    # NAT table rules
+    *nat
+    :POSTROUTING ACCEPT [0:0]
+    # Allow traffic from OpenVPN client to wlp11s0 (change to the interface you discovered!)
+    -A POSTROUTING -s 10.88.0.0/16 -o ens5 -j MASQUERADE
+    COMMIT
+    # END OPENVPN RULES
+    EOF
+
+    # Update /etc/default/ufw
+    # DEFAULT_FORWARD_POLICY="ACCEPT"
+
+    ufw allow 1194/udp
+    ufw allow OpenSSH
+    iptables -t nat -A POSTROUTING -o tun+ -j MASQUERADE
+    iptables -t nat -A POSTROUTING -o ens5 -j MASQUERADE
+
+- name: Create Client Working Directory
+  file:
+    path: /opt/openvpn/client-configs
+    state: directory
+- name: Configure Client
