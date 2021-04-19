@@ -1,0 +1,16 @@
+---
+# tasks file for docker
+- name: Update Repositories
+  command: apt update
+- name: Install prerequisite packages
+  command: "apt install apt-transport-https ca-certificates curl software-properties-common -y"
+- name: Install Docker
+  shell:
+    cmd: |
+      #!/bin/bash -xe
+      curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+      add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable" 
+      apt update
+      apt-cache policy docker-ce
+      apt install docker-ce -y
+      usermod -aG docker ${USER}
