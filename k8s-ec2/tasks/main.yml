@@ -1,0 +1,48 @@
+---
+# tasks file for building base ami of k8s in AWS
+- name: worker nodes security group
+  ec2_group: 
+    name: {{ worker_sg_name }}
+    description: Security Group for Worker Nodes
+    region: {{ region }}
+    rules:
+    - proto: tcp
+      from_port: 22
+      to_port: 22
+      cidr_ip: 0.0.0.0/0
+    - proto: tcp
+      from_port: 443
+      to_port: 443
+      group_name: 0.0.0.0/0
+    - proto: tcp
+      from_port: 6443
+      to_port: 6443
+      group_name: 0.0.0.0/0
+
+- name: launch base ec2 instance
+  ec2:
+    group: {{ sg_name }}
+    instance_type: {{ instance_type }}
+    image: {{ image }}
+    region: {{ region }}
+    keypair: {{ keypair }}
+    count: 3
+    volumes:
+    - device_name: /dev/xvda
+      volume_type: gp2
+      volume_size: 20
+      delete_on_termination: yes
+    wait: true
+    instance_tags:
+      Name: k8s-base
+      node: base
+      author: tankhuu
+      purpose: learn-cka
+  register: baseNode
+
+- name: wait for SSH to workers
+  wait_for:
+    host: {{ item.public_ip }}
+    port: 22
+    state: started
+  with_items: {{ baseNode.instances }}
